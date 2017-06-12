@@ -4,3 +4,4 @@ simplejson
 BeautifulSoup
 bs4
 requests
+Pillow
