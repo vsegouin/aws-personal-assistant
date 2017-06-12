@@ -1,0 +1,6 @@
+boto3
+rekognizer
+simplejson
+BeautifulSoup
+bs4
+requests
