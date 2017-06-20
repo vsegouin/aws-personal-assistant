@@ -7,7 +7,7 @@
  
 ## Installation
  - Install Aws cli
- - Generate AWS credential files (~/.aws/credential)
+ - Generate AWS credential files (~/.aws/credentials and ~/.aws/config )
  - clone project
- - pip install requirements.txt
+ - pip install -r requirements.txt
  
