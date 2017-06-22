@@ -15,7 +15,7 @@ class PiCamUtils:
         self.camera.meter_mode = 'average'
         self.camera.awb_mode = 'auto'
         self.camera.image_effect = 'none'
-        self..color_effects = None
+        self.color_effects = None
         self.camera.rotation = 0
         self.camera.hflip = False
         self.camera.vflip = False
