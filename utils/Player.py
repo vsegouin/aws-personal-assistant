@@ -11,6 +11,9 @@ CONFIG_FILES = [
 
 def main():
     parser = configargparse.ArgParser(default_config_files=CONFIG_FILES)
+    parser.add_argument('--assistant-secrets',
+                            default=os.path.expanduser('~/assistant.json'),
+                            help='Path to client secrets for the Assistant API')
     args = parser.parse_args()
     player = audio.Player(args.output_device)
 
