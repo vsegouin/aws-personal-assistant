@@ -1,24 +1,22 @@
-import subprocess
-import sys
 from contextlib import closing
-from tempfile import gettempdir
-
 import boto3
-import os
 from botocore.exceptions import BotoCoreError, ClientError
 from utils.Rekognition import Rekognition
+import pygame, StringIO
+import sys, traceback
 
 
 class VoiceUtils:
     def __init__(self):
         self.polly_client = boto3.client('polly')
         self.polly_configuration = "Emma"
+        pygame.mixer.init()
 
-    @staticmethod
     def tell_me(self, text_to_tell):
         try:
             # Request speech synthesis
-            response = self.polly_client.synthesize_speech(Text=text_to_tell, OutputFormat="mp3",
+            print('Try to get text')
+            response = self.polly_client.synthesize_speech(Text=text_to_tell, OutputFormat="ogg_vorbis",
                                                            VoiceId=self.polly_configuration)
         except (BotoCoreError, ClientError) as error:
             # The service returned an error, exit gracefully
@@ -31,30 +29,24 @@ class VoiceUtils:
             # number of parallel connections. Here we are using contextlib.closing to
             # ensure the close method of the stream object will be called automatically
             # at the end of the with statement's scope.
+            print('Speech got')
             with closing(response["AudioStream"]) as stream:
-                output = os.path.join(gettempdir(), "speech.mp3")
+                print("reading data")
+                data = stream.read()
+                print("writing text")
+                filelike = StringIO.StringIO(data)  # Gives you a file-like object
+                sound = pygame.mixer.Sound(file=filelike)
+                sound.set_volume(100)
+                print('playing sound')
+                sound.play()
+                while pygame.mixer.get_busy() == True:
+                    continue
 
-                try:
-                    # Open a file for writing the output as a binary stream
-                    with open(output, "wb") as file:
-                        file.write(stream.read())
-                except IOError as error:
-                    # Could not write to file, exit gracefully
-                    print(error)
-                    sys.exit(-1)
 
         else:
             # The response didn't contain audio data, exit gracefully
             print("Could not stream audio")
             sys.exit(-1)
-
-        # Play the audio using the platform's default player
-        if sys.platform == "win32":
-            os.startfile(output)
-        else:
-            # the following works on Mac and Linux. (Darwin = mac, xdg-open = linux).
-            opener = "open" if sys.platform == "darwin" else "xdg-open"
-            subprocess.call([opener, output])
 
     def list_languages(self, language):
         r_voices = self.polly_client.describe_voices(
