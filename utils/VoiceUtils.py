@@ -6,7 +6,7 @@ from tempfile import gettempdir
 import boto3
 import os
 from botocore.exceptions import BotoCoreError, ClientError
-from utils.Rekognition import Rekognition
+#from utils.Rekognition import Rekognition
 
 
 class VoiceUtils:
@@ -67,4 +67,5 @@ class VoiceUtils:
     def what_this_image_about(self, raw_img):
         response = Rekognition().detect_labels(raw_img)
         sujet = response['Labels'][0]["Name"]
-        self.tell_me("This image is about " + sujet)
+        self.tell_me("This image is about ")
+
