@@ -6,12 +6,13 @@ class LexRuntimeUtil:
         self.lex_client = boto3.client('lex-runtime')
 
     def say_something(self):
-        response = self.lex_client.post_content(
+        response = self.lex_client.post_text(
             botName='TodaysWeather',
-            sessionAttributes= True,
-            contentType='string',
-            accept='string',
+            botAlias='inspiration',
+            userId='aaa',
+            sessionAttributes={'string': 'string'},
+            inputText='Say something interresting',
         )
+        return response['message']
 
-lr = LexRuntimeUtil()
-lr.say_something()
+
