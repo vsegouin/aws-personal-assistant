@@ -4,3 +4,4 @@ BeautifulSoup
 bs4
 requests
 Pillow
+SoundAnalyse

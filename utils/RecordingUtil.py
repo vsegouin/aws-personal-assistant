@@ -1,71 +1,31 @@
-#!/usr/bin/python
-#
-# tone.py   play a tone on raspberry pi
-#
-
-import time
-
+import numpy
 import pyaudio
-from numpy import linspace, sin, pi, int16
+import analyse
 
-pa = None;
-s = None;
+# Initialize PyAudio
+pyaud = pyaudio.PyAudio()
 
+device_index = 2
+CHANNELS = 1
+AUDIO_SAMPLING_RATE = 48000
+AUDIO_BUFFER_SIZE = 1024
+FORMAT=pyaudio.paInt16
 
-def init_audio(rate=8000):
-    global pa, s
-    print "init_audio: Create PyAudio object"
-    pa = pyaudio.PyAudio()
-    print "init_audio: Open stream"
-    s = pa.open(output=True,
-                channels=1,
-                rate=rate,
-                format=pyaudio.paInt16,
-                output_device_index=0)
-    print "init_audio: audio stream initialized"
+# Open input stream, 16-bit mono at 48000 Hz
+# On my system, device 4 is a USB camera
 
-
-def close_audio():
-    global pa, s
-    print "close_audio: Closing stream"
-    s.close()
-    print "close_audio: Terminating PyAudio Object"
-    pa.terminate()
-
-
-def note(freq, len, amp=5000, rate=8000):
-    t = linspace(0, len, len * rate)
-    data = sin(2 * pi * freq * t) * amp
-    return data.astype(int16)  # two byte integers
-
-
-def tone(freq=440.0, tonelen=0.5, amplitude=5000, rate=8000):
-    global s
-    # generate sound
-    tone = note(freq, tonelen, amplitude, rate)
-
-    # play it
-    # print "tone.main(): start playing tone"
-    s.write(tone)
-
-
-# ##### MAIN ######
-def main():
-
-    # open audio channel
-    init_audio()
-
-    # play tones forever
-    print "tone.main(): start playing tones"
-    while True:
-        print "tone.main: tone() 440"
-        tone()
-        time.sleep(3)
-        print "tone.main: tone(261)"
-        tone(261, 1)
-        time.sleep(3)
-        print "tone.main: tone(880)"
-        tone(880)
-        time.sleep(3)
-
-main()
+stream = pyaud.open(
+    format=FORMAT,
+    channels=CHANNELS,
+    rate=AUDIO_SAMPLING_RATE,
+    input=True,
+    frames_per_buffer=AUDIO_BUFFER_SIZE,
+    input_device_index=device_index
+)
+while True:
+    # Read raw microphone data
+    rawsamps = stream.read(1024)
+    # Convert raw data to NumPy array
+    samps = numpy.fromstring(rawsamps, dtype=numpy.int16)
+    # Show the volume
+    print(analyse.loudness(samps))
