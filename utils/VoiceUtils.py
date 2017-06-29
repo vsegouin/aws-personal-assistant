@@ -7,6 +7,9 @@ import boto3
 import os
 from botocore.exceptions import BotoCoreError, ClientError
 #from utils.Rekognition import Rekognition
+from utils.audio import Player
+import utils.speech
+from pydub import AudioSegment
 
 
 class VoiceUtils:
@@ -49,12 +52,10 @@ class VoiceUtils:
             sys.exit(-1)
 
         # Play the audio using the platform's default player
-        if sys.platform == "win32":
-            os.startfile(output)
-        else:
-            # the following works on Mac and Linux. (Darwin = mac, xdg-open = linux).
-            opener = "open" if sys.platform == "darwin" else "xdg-open"
-            subprocess.call([opener, output])
+        sound = AudioSegment.from_mp3(output)
+        sound.export(gettempdir(), format="wav")
+        player = Player()
+        player.play_wav(gettempdir() + "speech.wav")
 
     def list_languages(self, language):
         r_voices = self.polly_client.describe_voices(
