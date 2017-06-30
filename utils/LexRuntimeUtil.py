@@ -9,7 +9,7 @@ class LexRuntimeUtil:
         dialogState = ''
         message = 'What do you want ?'
         while dialogState == '' or dialogState == 'ElicitSlot' or dialogState == 'ElicitIntent':
-            inputText = raw_input(message)
+            inputText = input(message)
             response = self.lex_client.post_text(
                 botName='WeatherInWorld',
                 botAlias='TodayWeather',
@@ -21,19 +21,19 @@ class LexRuntimeUtil:
             message = response['message']
         return message
 
-    def start_speech(self):
+    def start_speech(self,voice):
         dialogState = ''
         message = 'What do you want ?'
         while dialogState == '' or dialogState == 'ElicitSlot' or dialogState == 'ElicitIntent':
-            inputText = raw_input(message)
+            inputText = input(message)
             response = self.lex_client.post_content(
                 botName='WeatherInWorld',
                 botAlias='TodayWeather',
                 userId='aaa',
                 sessionAttributes={},
-                contentType='text/plain; charset=utf-8',
-                accept='text/plain; charset=utf-8',
-                inputStream=inputText
+                contentType='audio/mpeg; rate=22050; channels=1',
+                accept='audio/mpeg',
+                inputStream=voice
             )
             dialogState = response['dialogState']
             message = response['message']
