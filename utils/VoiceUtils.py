@@ -53,7 +53,7 @@ class VoiceUtils:
         sound = AudioSegment.from_mp3(output)
         sound.export(os.path.join(gettempdir(), "speech.wav"), format="wav")
         player = Player()
-        player.play_wav(gettempdir() + "speech.wav")
+        player.play_wav(gettempdir() + "/speech.wav")
 
     def fetch_raw(self, text_to_tell):
         try:
