@@ -13,12 +13,12 @@ class RecordingUtil :
         WAVE_OUTPUT_FILENAME = "apt.wav"
 
         stream = self.p.open(format=FORMAT,
-                        rate=RATE,
-                        channels=CHANNELS,  # change this to what your sound card supports
-                        input_device_index=INPUT_DEVICE_INDEX,  # change this your input sound card index
-                        input=True,
-                        output=False,
-                        frames_per_buffer=CHUNK)
+                             rate=RATE,
+                             channels=CHANNELS,  # change this to what your sound card supports
+                             input_device_index=INPUT_DEVICE_INDEX,  # change this your input sound card index
+                             input=True,
+                             output=False,
+                             frames_per_buffer=CHUNK)
 
 
         frames = []

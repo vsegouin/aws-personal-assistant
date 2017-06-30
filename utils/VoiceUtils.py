@@ -76,6 +76,7 @@ class VoiceUtils:
                 result = stream.read()
             print(result)
             return result
+
     def list_languages(self, language):
         r_voices = self.polly_client.describe_voices(
             LanguageCode=language
@@ -92,4 +93,4 @@ class VoiceUtils:
     def play_sound(self,sound_raw):
         # Play the audio using the platform's default player
         player = Player()
-        player.play_bytes(sound_raw, 48000)
+        player.play_bytes(sound_raw, 16000)
