@@ -1,25 +1,27 @@
+import sys
 from contextlib import closing
+from tempfile import gettempdir
+
 import boto3
+import os
+import pygame
 from botocore.exceptions import BotoCoreError, ClientError
-from utils.Rekognition import Rekognition
-import pygame, StringIO
-import sys, traceback
-#from utils.Rekognition import Rekognition
-from utils.audio import Player
-import utils.speech
 from pydub import AudioSegment
+
+# from utils.Rekognition import Rekognition
+from utils.audio import Player
 
 
 class VoiceUtils:
     def __init__(self):
         self.polly_client = boto3.client('polly')
         self.polly_configuration = "Emma"
-        pygame.mixer.init()
+      #  pygame.mixer.init()
 
     def tell_me(self, text_to_tell):
         try:
             # Request speech synthesis
-            response = self.polly_client.synthesize_speech(Text=text_to_tell, OutputFormat="mp3",
+            response = self.polly_client.synthesize_speech(Text=text_to_tell, OutputFormat="wav",
                                                            VoiceId=self.polly_configuration)
         except (BotoCoreError, ClientError) as error:
             # The service returned an error, exit gracefully
@@ -33,7 +35,7 @@ class VoiceUtils:
             # ensure the close method of the stream object will be called automatically
             # at the end of the with statement's scope.
             with closing(response["AudioStream"]) as stream:
-                output = os.path.join(gettempdir(), "speech.mp3")
+                output = os.path.join(gettempdir(), "speech.wav")
 
                 try:
                     # Open a file for writing the output as a binary stream
@@ -51,7 +53,7 @@ class VoiceUtils:
 
         # Play the audio using the platform's default player
         sound = AudioSegment.from_mp3(output)
-        sound.export(gettempdir(), format="wav")
+        sound.export(os.path.join(gettempdir(), "speech.wav"), format="wav")
         player = Player()
         player.play_wav(gettempdir() + "speech.wav")
 

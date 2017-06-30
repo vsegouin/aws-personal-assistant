@@ -1,7 +1,9 @@
 boto3
 simplejson
-BeautifulSoup
+beautifulsoup4
 bs4
 requests
 Pillow
 SoundAnalyse
+pydub
+pygame
