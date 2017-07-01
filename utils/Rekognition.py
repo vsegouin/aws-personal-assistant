@@ -3,7 +3,7 @@ import io
 import boto3
 from PIL import Image
 
-import GoogleImageDownloader
+from utils.GoogleImageDownloader import GoogleImageDownloader
 from utils.ImageUtils import ImageUtils
 
 
@@ -12,7 +12,8 @@ class Rekognition:
         self.rekognition_client = boto3.client('rekognition')
 
     def fetch_image_and_label_it(self, keyword):
-        raw_img = GoogleImageDownloader.get_image_from_google(keyword)
+        gid = GoogleImageDownloader()
+        raw_img = gid.get_image_from_google(keyword)
         self.detect_labels(raw_img)
 
     def detect_moderation_labels(self):
@@ -1072,17 +1073,6 @@ class Rekognition:
                 'ALL',
             ]
         )
-
-        if not face['FaceDetails']:
-            print('no face detected')
-        else:
-            print('there is ' + repr(len(face['FaceDetails'])) + ' faces')
-            im = Image.open(io.BytesIO(raw_img))
-            for face in face['FaceDetails']:
-                im = ImageUtils.draw_box(face['BoundingBox']['Top'], face['BoundingBox']['Left'],
-                                         face['BoundingBox']['Width'], face['BoundingBox']['Height'], im)
-            im.save("toto.png", "PNG")
-
         return face
 
     '''{

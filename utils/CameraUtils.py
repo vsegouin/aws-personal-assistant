@@ -1,5 +1,6 @@
 import picamera
-
+import time
+import io
 
 class PiCamUtils:
     def __init__(self):
@@ -21,8 +22,12 @@ class PiCamUtils:
         self.camera.vflip = False
         self.camera.crop = (0.0, 0.0, 1.0, 1.0)
 
-    def take_screenshot(self, name):
-        self.camera.capture(name)
+    def take_screenshot(self):
+        stream = io.BytesIO()
+
+        self.camera.capture(stream, format='jpeg')
+        # At this point the image is available as stream.array
+        return bytearray(stream.getvalue())
 
     def start_preview(self):
         self.camera.start_preview()

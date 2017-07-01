@@ -14,6 +14,7 @@ class VoiceUtils:
     def __init__(self):
         self.polly_client = boto3.client('polly')
         self.polly_configuration = "Emma"
+        self.player = Player()
         #  pygame.mixer.init()
 
     def tell_me(self, text_to_tell):
@@ -92,5 +93,31 @@ class VoiceUtils:
 
     def play_sound(self,sound_raw):
         # Play the audio using the platform's default player
-        player = Player()
-        player.play_bytes(sound_raw, 16000)
+        self.player.play_bytes(sound_raw, 16000)
+
+    def describe_face(self,response):
+        if len(response['FaceDetails']) > 0:
+            numOfFace = len(response['FaceDetails']);
+            message = "I'm currently seeing "+repr(numOfFace)+' face, '
+            index = 1
+            for face in response['FaceDetails']:
+                sex = face['Gender']['Value']
+                eyeglass = face['Eyeglasses']['Value']
+                emotion = face['Emotions'][0]['Type']
+                smile = face['Smile']['Value']
+                prefix = 'He' if sex == 'Male' else 'Female'
+
+                message += 'The person number '+repr(index)+' is a '+sex+'. '
+                if eyeglass:
+                    message += prefix+' wears eyeglasses. '
+                else :
+                    message += prefix+' doesn\'t wear eyeglasses. '
+                if smile:
+                    message+= prefix+' is smiling. '
+                else :
+                    message+= prefix+' is not smiling. '
+                message+= prefix+' seems to be '+emotion+'. '
+        else:
+            message = "I'm sorry, i can't detect any face"
+        print(message)
+        self.tell_me(message)
