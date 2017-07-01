@@ -4,8 +4,6 @@ beautifulsoup4
 bs4
 requests
 Pillow
-SoundAnalyse
 pydub
 pygame
-pocketsphinx
-SpeechRecognition
+
