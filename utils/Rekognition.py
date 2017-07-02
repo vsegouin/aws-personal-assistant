@@ -56,14 +56,16 @@ class Rekognition:
     }
     '''
 
-    def detect_labels(self, image_raw):
+    def detect_labels(self, image_raw, label_number = 123):
+        print('detecting labels')
         response = self.rekognition_client.detect_labels(
             Image={
                 'Bytes': image_raw
             },
-            MaxLabels=123,
+            MaxLabels=label_number,
             MinConfidence=60
         )  # Let's use Amazon S3
+        print(response)
         return response
 
     '''

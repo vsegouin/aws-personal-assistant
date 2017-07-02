@@ -121,3 +121,13 @@ class VoiceUtils:
             message = "I'm sorry, i can't detect any face"
         print(message)
         self.tell_me(message)
+
+    def describe_theme(self,response):
+        if len(response['Labels']) > 0:
+            message = 'I can tell '+repr(len(response['Labels']))+' themes about what I see. '
+            for label in response['Labels']:
+                message += label['Name']+', '
+        else:
+            message = "I'm sorry i can't detect any theme about what I see"
+        print(message)
+        self.tell_me(message)

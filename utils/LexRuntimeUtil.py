@@ -67,26 +67,37 @@ class LexRuntimeUtil:
                 inputStream=command_to_send
             )
             print(response)
-            if "audioStream" in response:
+            tell_message = False
+            if response['inputTranscript'] == 'start the camera':
+                try:
+                    self.camera.start_preview()
+                except Exception as error:
+                    self.voice_client.tell_me("The camera is already started")
+
+            elif response['inputTranscript'] == 'stop the camera':
+                try:
+                    self.camera.start_preview()
+                except Exception as error:
+                    self.voice_client.tell_me("The camera is already stopped")
+
+            elif response['inputTranscript'] == 'describe this':
+                photo = self.camera.take_screenshot()
+                response = self.rekognition.detect_labels(photo, 4)
+                self.voice_client.describe_theme(response)
+
+            elif response['inputTranscript'] == 'take capture':
+                photo = self.camera.take_screenshot()
+                response = self.rekognition.detect_face(photo)
+                self.voice_client.describe_face(response)
+            else:
+                tell_message = True
+
+            if "audioStream" in response and tell_message:
                 result = '';
                 with closing(response["audioStream"]) as stream:
                     message = stream.read()
                 self.voice_client.play_sound(message)
 
-            if response['inputTranscript'] == 'start the camera':
-                self.camera.start_preview()
-
-            if response['inputTranscript'] == 'stop the camera':
-                self.camera.stop_preview()
-
-            if response['inputTranscript'] == 'describe this':
-                photo = self.camera.take_screenshot()
-                response = self.rekognition.detect_labels(photo,4)
-
-            if response['inputTranscript'] == 'take capture':
-                photo = self.camera.take_screenshot()
-                response = self.rekognition.detect_face(photo)
-                self.voice_client.describe_face(response)
 
             if "dialogState" in response:
                 if response["dialogState"] == "Fulfilled" or response["dialogState"] == "Failed":
