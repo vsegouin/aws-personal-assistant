@@ -52,12 +52,10 @@ class LexRuntimeUtil:
         return message
 
     def start_vocal_speech(self):
-        dialogState = ''
-        prompt = 'What do you want ?'
-        message = ''
-        self.voice_client.tell_me(prompt)
+        dialogState = 'ElicitIntent'
         userId = repr(random.randrange(0,100000))
-        while dialogState == '' or dialogState == 'ElicitSlot' or dialogState == 'ElicitIntent':
+        self.voice_client.tell_me('What do you want ?')
+        while dialogState == 'ElicitSlot' or dialogState == 'ElicitIntent':
             command_to_send = self.recorder.loudness_test()
             response = self.lex_client.post_content(
                 botName='WeatherInWorld',
@@ -81,8 +79,11 @@ class LexRuntimeUtil:
             if response['inputTranscript'] == 'stop the camera':
                 self.camera.stop_preview()
 
+            if response['inputTranscript'] == 'describe this':
+                photo = self.camera.take_screenshot()
+                response = self.rekognition.detect_labels(photo,4)
+
             if response['inputTranscript'] == 'take capture':
-                self.camera.start_preview()
                 photo = self.camera.take_screenshot()
                 response = self.rekognition.detect_face(photo)
                 self.voice_client.describe_face(response)
